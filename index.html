@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw Teams</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Draw Teams</h1>
+
+        <div class="card">
+            <h2>Jogadores</h2>
+            <div class="input-group">
+                <input type="text" id="jogador-input" placeholder="Digite o nome do jogador">
+                <button id="adicionar-btn">Adicionar</button>
+            </div>
+            <ul id="lista-jogadores">
+                </ul>
+        </div>
+
+        <div class="card">
+            <h2>Sorteio de Equipes</h2>
+            <div class="input-group">
+                <input type="number" id="jogadores-por-equipe-input" placeholder="Jogadores por equipe" min="2">
+                <button id="sortear-btn">Sortear Equipes</button>
+                <button id="limpar-sorteio-btn" class="secondary-btn">Limpar Sorteio</button>
+            </div>
+        </div>
+
+        <div id="resultado-sorteio">
+            <div id="equipes-sorteadas">
+                </div>
+        </div>
+        
+        <div class="card">
+            <h2>Cronômetro</h2>
+
+            <div class="input-group-cronometro">
+            <label for="tempo-partida-input">Tempo da Partida (min):</label>
+            <input type="number" id="tempo-partida-input" value="7" min="1">
+            </div>
+
+            <div id="cronometro-display">00:00</div>
+            <div class="botoes-cronometro">
+                <button id="iniciar-btn">Iniciar</button>
+                <button id="pausar-btn">Pausar</button>
+                <button id="zerar-btn">Zerar</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="alarme-audio" src="Sounds/inhambu-whistle-bird-190067.mp3" preload="auto" loop></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
