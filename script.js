@@ -108,19 +108,22 @@ function excluirJogador(index) {
 
 function sortearEquipes() {
     const jogadoresPorEquipe = parseInt(jogadoresPorEquipeInput.value);
-    if (isNaN(jogadoresPorEquipe) || jogadoresPorEquipe < 2) { /* ... */ return; }
 
-    const goleiros = jogadores.filter(j => j.isGoleiro);
-    const jogadoresDeLinha = jogadores.filter(j => !j.isGoleiro);
-
-    goleiros.sort((a, b) => b.pontuacao - a.pontuacao);
-    jogadoresDeLinha.sort((a, b) => b.pontuacao - a.pontuacao);
-
-    const numEquipes = Math.floor(jogadores.length / jogadoresPorEquipe);
-    if (numEquipes === 0) {
-        alert("Não há jogadores suficientes para formar nenhuma equipe completa.");
+    if (isNaN(jogadoresPorEquipe) || jogadoresPorEquipe < 3) { 
+        alert("O número de jogadores por equipe deve ser pelo menos 3.");
         return;
     }
+
+    const goleiros = jogadores.filter(j => j.isGoleiro).sort((a, b) => b.pontuacao - a.pontuacao);
+    const jogadoresDeLinha = jogadores.filter(j => !j.isGoleiro).sort((a, b) => b.pontuacao - a.pontuacao);
+
+    const vagasPorLinha = jogadoresPorEquipe - 1;
+    if (jogadoresDeLinha.length < vagasPorLinha) {
+        alert("Não há jogadores de linha suficientes para formar sequer uma equipe.");
+        return;
+    }
+    const numEquipes = Math.floor(jogadoresDeLinha.length / vagasPorLinha);
+
     const equipes = Array.from({ length: numEquipes }, (_, i) => ({
         nome: `Equipe ${i + 1}`,
         jogadores: [],
@@ -134,40 +137,30 @@ function sortearEquipes() {
         }
     });
 
-    let indiceJogadorDeLinha = 0;
-    let preenchendo = true;
-    while (preenchendo) {
-        let jogadoresAdicionadosNestaVolta = 0;
+    const jogadoresParaDistribuir = jogadoresDeLinha.slice(0, numEquipes * vagasPorLinha);
+    let rodada = 0;
 
-        for (let i = 0; i < numEquipes; i++) {
-            if (equipes[i].jogadores.length < jogadoresPorEquipe && indiceJogadorDeLinha < jogadoresDeLinha.length) {
-                const jogador = jogadoresDeLinha[indiceJogadorDeLinha++];
-                equipes[i].jogadores.push(jogador);
-                equipes[i].pontuacaoTotal += jogador.pontuacao;
-                jogadoresAdicionadosNestaVolta++;
-            }
+    jogadoresParaDistribuir.forEach((jogador, i) => {
+        let indiceEquipe;
+        const isRodadaPar = rodada % 2 === 0;
+
+        if (isRodadaPar) { 
+            indiceEquipe = i % numEquipes;
+        } else { 
+            indiceEquipe = (numEquipes - 1) - (i % numEquipes);
         }
 
-        for (let i = numEquipes - 1; i >= 0; i--) {
-            if (equipes[i].jogadores.length < jogadoresPorEquipe && indiceJogadorDeLinha < jogadoresDeLinha.length) {
-                const jogador = jogadoresDeLinha[indiceJogadorDeLinha++];
-                equipes[i].jogadores.push(jogador);
-                equipes[i].pontuacaoTotal += jogador.pontuacao;
-                jogadoresAdicionadosNestaVolta++;
-            }
+        equipes[indiceEquipe].jogadores.push(jogador);
+        equipes[indiceEquipe].pontuacaoTotal += jogador.pontuacao;
+
+        if ((i + 1) % numEquipes === 0) {
+            rodada++;
         }
-        
-        if (jogadoresAdicionadosNestaVolta === 0) {
-            preenchendo = false;
-        }
-    }
-    
-    const jogadoresAlocados = equipes.reduce((acc, equipe) => acc + equipe.jogadores.length, 0);
-    const todosOsOrdenados = [...goleiros, ...jogadoresDeLinha];
-    
-    const jogadoresRestantes = jogadores.filter(j => 
-        !equipes.some(e => e.jogadores.some(p => p.nome === j.nome))
-    );
+    });
+
+    const goleirosRestantes = goleiros.slice(numEquipes);
+    const jogadoresDeLinhaRestantes = jogadoresDeLinha.slice(numEquipes * vagasPorLinha);
+    const jogadoresRestantes = [...goleirosRestantes, ...jogadoresDeLinhaRestantes];
 
     if (jogadoresRestantes.length > 0) {
         equipes.push({
@@ -186,15 +179,28 @@ function exibirEquipes(equipes) {
     equipes.forEach(equipe => {
         const divEquipe = document.createElement('div');
         divEquipe.classList.add('equipe');
+
         const h3 = document.createElement('h3');
         h3.textContent = `${equipe.nome} (Total: ${equipe.pontuacaoTotal})`;
         divEquipe.appendChild(h3);
+
         const ul = document.createElement('ul');
         equipe.jogadores.forEach(jogador => {
             const li = document.createElement('li');
-            li.textContent = `${jogador.nome} (${jogador.pontuacao})`;
+            
+            const textoJogador = document.createTextNode(`${jogador.nome} (${jogador.pontuacao})`);
+            li.appendChild(textoJogador);
+
+            if (jogador.isGoleiro) {
+                const goleiroSpan = document.createElement('span');
+                goleiroSpan.textContent = ' (G)';
+                goleiroSpan.classList.add('goleiro-indicator');
+                li.appendChild(goleiroSpan);
+            }
+
             ul.appendChild(li);
         });
+
         divEquipe.appendChild(ul);
         equipesSorteadasDiv.appendChild(divEquipe);
     });
