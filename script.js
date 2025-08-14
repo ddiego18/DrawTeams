@@ -286,6 +286,21 @@ listaJogadoresUl.addEventListener('click', (event) => {
         inputPontuacao.min = 1;
         inputPontuacao.max = 10;
         inputPontuacao.classList.add('edit-input');
+        
+        const divGoleiro = document.createElement('div');
+        divGoleiro.classList.add('checkbox-container'); 
+        const inputGoleiro = document.createElement('input');
+        inputGoleiro.type = 'checkbox';
+        inputGoleiro.id = `edit-goleiro-${index}`; 
+        inputGoleiro.classList.add('edit-goleiro-checkbox');
+        inputGoleiro.checked = jogadorAtual.isGoleiro; 
+
+        const labelGoleiro = document.createElement('label');
+        labelGoleiro.textContent = 'G?'; 
+        labelGoleiro.htmlFor = `edit-goleiro-${index}`;
+        
+        divGoleiro.appendChild(inputGoleiro);
+        divGoleiro.appendChild(labelGoleiro);
 
         const btnSalvar = document.createElement('button');
         btnSalvar.textContent = 'Salvar';
@@ -298,6 +313,7 @@ listaJogadoresUl.addEventListener('click', (event) => {
         nameSpan.innerHTML = ''; 
         nameSpan.appendChild(inputNome);
         nameSpan.appendChild(inputPontuacao);
+        nameSpan.appendChild(divGoleiro); 
         nameSpan.appendChild(btnSalvar);
         nameSpan.appendChild(btnCancelar);
         inputNome.focus();
@@ -306,12 +322,14 @@ listaJogadoresUl.addEventListener('click', (event) => {
     if (targetButton.classList.contains('salvar-btn')) {
         const inputNome = li.querySelector('.edit-input[type="text"]');
         const inputPontuacao = li.querySelector('.edit-input[type="number"]');
+        const inputGoleiro = li.querySelector('.edit-goleiro-checkbox'); 
         
         const novoNome = inputNome.value.trim();
         const novaPontuacao = parseInt(inputPontuacao.value);
+        const ehGoleiro = inputGoleiro.checked; 
 
         if (novoNome && !isNaN(novaPontuacao)) {
-            jogadores[index] = { nome: novoNome, pontuacao: novaPontuacao };
+            jogadores[index] = { nome: novoNome, pontuacao: novaPontuacao, isGoleiro: ehGoleiro };
         }
         atualizarListaJogadores();
     }
