@@ -247,3 +247,49 @@ button:hover {
     50% { opacity: 0.4; }
     100% { opacity: 1; }
 }
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 10px; 
+    }
+
+    .input-group {
+        flex-direction: column; 
+        gap: 12px;              
+        align-items: stretch;  
+    }
+
+    #pontuacao-input {
+        width: auto;
+    }
+
+    .checkbox-container {
+        justify-content: center; 
+    }
+
+    #equipes-sorteadas {
+        flex-direction: column; 
+        gap: 12px;
+    }
+
+    .equipe {
+        min-width: 90%; 
+    }
+
+    #lista-jogadores .player-name {
+        flex-wrap: wrap; 
+        gap: 8px;
+    }
+
+    #lista-jogadores .salvar-btn,
+    #lista-jogadores .cancelar-btn {
+        width: 100%;
+        text-align: center;
+        margin-left: 0;
+    }
+}
