@@ -14,7 +14,7 @@ const iniciarBtn = document.getElementById('iniciar-btn');
 const pausarBtn = document.getElementById('pausar-btn');
 const zerarBtn = document.getElementById('zerar-btn');
 
-let jogadores = ['Diego', 'Demerson', 'Denilson', 'Matheus', 'Lucas', 'Bruno', 'Baiano', 'Pedrinho', 'Likinhas', 'Ci', 'Adeilson', 'Matheus Lima', 'Victor', 'Willian', 'Charlison', 'Zuntão', 'Rodrigo Barreto', 'Rodrigo', 'Samuel', 'Willian goleiro', 'Markin'];
+let jogadores = ['Diego', 'Demerson', 'Denilson', 'Matheus', 'Lucas', 'Bruno', 'Baiano', 'Pedrinho', 'Lukinhas', 'Ci', 'Adeilson', 'Matheus Lima', 'Victor', 'Willian', 'Charlison', 'Zuntão', 'Rodrigo Barreto', 'Rodrigo (Tinin)', 'Samuel', 'Willian goleiro', 'Markin'];
 let cronometroInterval;
 let segundos = 0;
 let minutos = 0;
@@ -238,4 +238,5 @@ sortearBtn.addEventListener('click', sortearEquipes);
 iniciarBtn.addEventListener('click', iniciarCronometro);
 pausarBtn.addEventListener('click', pausarCronometro);
 zerarBtn.addEventListener('click', zerarCronometro);
+
 limparSorteioBtn.addEventListener('click', limparSorteio);
