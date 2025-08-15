@@ -106,17 +106,29 @@ function excluirJogador(index) {
     atualizarListaJogadores();
 }
 
+/**
+ * Sorteia equipes com base em goleiros fixos, com aleatoriedade entre jogadores de mesma pontuação.
+ * Times sem goleiro terão um jogador a menos.
+ */
 function sortearEquipes() {
     const jogadoresPorEquipe = parseInt(jogadoresPorEquipeInput.value);
 
-    if (isNaN(jogadoresPorEquipe) || jogadoresPorEquipe < 3) { 
+    // Validações iniciais
+    if (isNaN(jogadoresPorEquipe) || jogadoresPorEquipe < 3) {
         alert("O número de jogadores por equipe deve ser pelo menos 3.");
         return;
     }
 
-    const goleiros = jogadores.filter(j => j.isGoleiro).sort((a, b) => b.pontuacao - a.pontuacao);
-    const jogadoresDeLinha = jogadores.filter(j => !j.isGoleiro).sort((a, b) => b.pontuacao - a.pontuacao);
+    // 1. SEPARAR JOGADORES E ORDENAR COM ALEATORIEDADE
+    const goleiros = jogadores
+        .filter(j => j.isGoleiro)
+        .sort((a, b) => (b.pontuacao - a.pontuacao) || (Math.random() - 0.5)); // <-- MUDANÇA AQUI
 
+    const jogadoresDeLinha = jogadores
+        .filter(j => !j.isGoleiro)
+        .sort((a, b) => (b.pontuacao - a.pontuacao) || (Math.random() - 0.5)); // <-- MUDANÇA AQUI
+
+    // 2. CALCULAR O NÚMERO DE TIMES COM BASE NOS JOGADORES DE LINHA
     const vagasPorLinha = jogadoresPorEquipe - 1;
     if (jogadoresDeLinha.length < vagasPorLinha) {
         alert("Não há jogadores de linha suficientes para formar sequer uma equipe.");
@@ -124,19 +136,22 @@ function sortearEquipes() {
     }
     const numEquipes = Math.floor(jogadoresDeLinha.length / vagasPorLinha);
 
+    // 3. CRIAR AS ESTRUTURAS VAZIAS DAS EQUIPES
     const equipes = Array.from({ length: numEquipes }, (_, i) => ({
         nome: `Equipe ${i + 1}`,
         jogadores: [],
         pontuacaoTotal: 0
     }));
 
+    // 4. DISTRIBUIR OS GOLEIROS (SE HOUVER) PARA OS PRIMEIROS TIMES
     goleiros.forEach((goleiro, index) => {
-        if (index < numEquipes) { 
+        if (index < numEquipes) {
             equipes[index].jogadores.push(goleiro);
             equipes[index].pontuacaoTotal += goleiro.pontuacao;
         }
     });
 
+    // 5. DISTRIBUIR OS JOGADORES DE LINHA DE FORMA EQUILIBRADA (SNAKE DRAFT)
     const jogadoresParaDistribuir = jogadoresDeLinha.slice(0, numEquipes * vagasPorLinha);
     let rodada = 0;
 
@@ -144,9 +159,9 @@ function sortearEquipes() {
         let indiceEquipe;
         const isRodadaPar = rodada % 2 === 0;
 
-        if (isRodadaPar) { 
+        if (isRodadaPar) {
             indiceEquipe = i % numEquipes;
-        } else { 
+        } else {
             indiceEquipe = (numEquipes - 1) - (i % numEquipes);
         }
 
@@ -158,6 +173,7 @@ function sortearEquipes() {
         }
     });
 
+    // 6. AGRUPAR OS JOGADORES QUE SOBRARAM
     const goleirosRestantes = goleiros.slice(numEquipes);
     const jogadoresDeLinhaRestantes = jogadoresDeLinha.slice(numEquipes * vagasPorLinha);
     const jogadoresRestantes = [...goleirosRestantes, ...jogadoresDeLinhaRestantes];
@@ -172,6 +188,7 @@ function sortearEquipes() {
 
     exibirEquipes(equipes);
 }
+
 
 function exibirEquipes(equipes) {
     equipesSorteadasDiv.innerHTML = '';
@@ -343,4 +360,5 @@ listaJogadoresUl.addEventListener('click', (event) => {
     if (targetButton.classList.contains('cancelar-btn')) {
         atualizarListaJogadores();
     }
+
 });
